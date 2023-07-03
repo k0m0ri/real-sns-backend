@@ -1,7 +1,4 @@
 const router = require("express").Router();
-
-router.get("/", (req, res) => {
-    res.send("user router");
-});
+const User = require("../models/User");
 
 module.exports = router;

@@ -29,9 +29,13 @@ const  UserSchema = new mongoose.Schema(
             type: Array,
             default: [],
         },
+        followings: {
+            type: Array,
+            default: [],
+        },
         isAdmin: {
             type: Boolean,
-            default: [],
+            default: false,
         },
         dsec: {
             type: String,

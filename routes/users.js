@@ -8,7 +8,7 @@ router.put("/:id", async(req, res) => {
     if(req.body.userId === req.params.id || req.body.isAdmin) {
         try {
             const user = await User.findByIdAndUpdate(req.params.id, {
-                // $->Schemaのパラメーター全指定
+                // $: Schemaのパラメーター全指定
                 $set: req.body,
             });
             res.status(200).json("ユーザー情報が更新されました");
@@ -44,5 +44,65 @@ router.get("/:id", async(req, res) => {
         return res.status(500).json(err);
     }
 });
+
+// ユーザーのフォロー
+router.put("/:id/follow", async(req, res) => {
+    if(req.body.userId !== req.params.id) {
+        try {
+            const follower = await User.findById(req.params.id);
+            const you = await User.findById(req.body.userId);
+
+            if(!follower.followers.includes(req.body.userId)) {
+                await follower.updateOne({
+                    $push: {
+                        followers: req.body.userId,
+                    },
+                });
+                await you.updateOne({
+                    $push: {
+                        followings: req.params.id,
+                    },
+                });
+                return res.status(200).json("フォローしました");
+            } else {
+                return res.status(403).json("フォロー済みのユーザーです");
+            }
+        } catch(err) {
+            return res.status(500).json(err);
+        }
+    } else {
+        return res.status(500).json("自分自身はフォローすることができません");
+    }
+})
+
+// ユーザーのアンフォロー
+router.put("/:id/unfollow", async(req, res) => {
+    if(req.body.userId !== req.params.id) {
+        try {
+            const unfollower = await User.findById(req.params.id);
+            const you = await User.findById(req.body.userId);
+
+            if(unfollower.followers.includes(req.body.userId)) {
+                await unfollower.updateOne({
+                    $pull: {
+                        followers: req.body.userId,
+                    },
+                });
+                await you.updateOne({
+                    $pull: {
+                        followings: req.params.id,
+                    },
+                });
+                return res.status(200).json("フォロー解除しました");
+            } else {
+                return res.status(403).json("フォローされていません");
+            }
+        } catch(err) {
+            return res.status(500).json(err);
+        }
+    } else {
+        return res.status(500).json("自分自身のフォローを外すことはできません");
+    }
+})
 
 module.exports = router;

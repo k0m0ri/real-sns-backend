@@ -47,6 +47,7 @@ router.get("/:id", async(req, res) => {
 
 // ユーザーのフォロー
 router.put("/:id/follow", async(req, res) => {
+    // 自分自身のIDとフォロー対象のユーザーのIDが等しくない
     if(req.body.userId !== req.params.id) {
         try {
             const follower = await User.findById(req.params.id);
@@ -77,6 +78,7 @@ router.put("/:id/follow", async(req, res) => {
 
 // ユーザーのアンフォロー
 router.put("/:id/unfollow", async(req, res) => {
+    // 自分自身のIDとフォロー解除対象のユーザーのIDが等しくない
     if(req.body.userId !== req.params.id) {
         try {
             const unfollower = await User.findById(req.params.id);

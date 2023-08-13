@@ -53,6 +53,7 @@ router.put("/:id/follow", async(req, res) => {
             const follower = await User.findById(req.params.id);
             const you = await User.findById(req.body.userId);
 
+            // これからフォローする人のフォローワーに自身が含まれていない場合、フォロー可能
             if(!follower.followers.includes(req.body.userId)) {
                 await follower.updateOne({
                     $push: {
